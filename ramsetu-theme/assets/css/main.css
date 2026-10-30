@@ -1137,3 +1137,8 @@ body.home .hb { background: #fff; }
 .leader .person__photo--extra { width: 120px; }
 .leader .person__photo--extra img { object-position: center 20%; }
 @media (max-width: 560px) { .leader .person__photo--extra { width: 100px; } }
+/* Siddaganga: photo of Sanjeev Verma with the faculty (1.14.0) */
+.supporter__photo { grid-column: 2; margin: 8px 0 0; max-width: 560px; }
+.supporter__photo img { display: block; width: 100%; height: auto; border-radius: 16px; box-shadow: var(--shadow); }
+.supporter__photo figcaption { margin-top: 8px; font-size: 13.5px; color: var(--ink-2); }
+@media (max-width: 560px) { .supporter__photo { grid-column: 1; } }

@@ -119,14 +119,17 @@ rs_page_hero( __( 'About Us', 'ramsetu' ), rs_mod( 'about_hero' ), '', 'green', 
 									<span class="person__initials" aria-hidden="true"><?php echo esc_html( rs_initials( $p->post_title ) ); ?></span>
 								<?php endif; ?>
 							</div>
-							<?php if ( $extra ) : ?>
-								<div class="person__photo person__photo--extra"><img src="<?php echo esc_url( $extra ); ?>" alt="<?php esc_attr_e( 'Sanjeev Verma, Founder, MD & CEO, RamSetu', 'ramsetu' ); ?>" width="300" height="300" loading="lazy"></div>
-							<?php endif; ?>
 							</div>
 							<div class="person__body"><h4 class="person__name"><?php echo esc_html( $p->post_title ); ?></h4></div>
 						</div>
 						<?php if ( trim( $p->post_content ) ) : ?>
 							<div class="leader__bio"><?php echo wp_kses_post( wpautop( $p->post_content ) ); ?></div>
+						<?php endif; ?>
+						<?php if ( $extra ) : ?>
+							<figure class="supporter__photo">
+								<img src="<?php echo esc_url( $extra ); ?>" alt="<?php esc_attr_e( 'Sanjeev Verma, Founder, MD & CEO of RamSetu, with the faculty of Siddaganga Institute of Technology', 'ramsetu' ); ?>" width="1200" height="750" loading="lazy">
+								<figcaption><?php esc_html_e( 'Sanjeev Verma, Founder, MD & CEO, with the faculty of Siddaganga Institute of Technology', 'ramsetu' ); ?></figcaption>
+							</figure>
 						<?php endif; ?>
 					</div>
 				</article>

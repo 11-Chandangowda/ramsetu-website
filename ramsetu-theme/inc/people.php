@@ -39,12 +39,12 @@ function rs_default_supporters() {
 			'Campus & Talent Development Partners',
 			'RamSetu is proud to partner with Siddaganga Institute of Technology as a Campus & Talent Development Partner, with a shared commitment to nurturing and developing future-ready professionals. Through this association, we aim to bridge academic learning with practical industry experience, enabling young talent to build essential skills, take on meaningful responsibilities, and develop professionally. Our focus is on fostering continuous learning, strengthening capabilities, and creating an environment where individuals can realise their potential and build successful, long-term careers.',
 			'supporter-sit.jpg',
-			'supporter-sit-person.jpg', // round photo shown below the logo
+			'supporter-sit-group.jpg', // photo of Sanjeev Verma with the faculty, shown below the text
 		),
 	);
 }
 
-/** Extra round photo for a supporter (file in assets/img/people/), or ''. */
+/** Extra photo for a supporter (file in assets/img/people/), or ''. */
 function rs_supporter_extra_photo( $title ) {
 	foreach ( rs_default_supporters() as $s ) {
 		if ( ! empty( $s[4] ) && 0 === strpos( $title, preg_replace( '/,.*$/', '', $s[0] ) ) && file_exists( get_template_directory() . '/assets/img/people/' . $s[4] ) ) {

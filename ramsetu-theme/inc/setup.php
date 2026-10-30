@@ -760,3 +760,50 @@ add_action( 'init', function () {
 	}
 	update_option( 'rs_1130_done', 1 );
 }, 39 );
+
+/**
+ * 1.14.0 (30 Oct): make sure Ajay Shah and Bipin Oberoi show under Our Advisors, whatever their
+ * saved title, status or group (Aarti > Ajay > Bipin).
+ */
+add_action( 'init', function () {
+	if ( ! get_option( 'rs_setup_done' ) || get_option( 'rs_1140_done' ) || ! post_type_exists( 'rs_team' ) ) {
+		return;
+	}
+	$people = array(
+		array( 'Aarti', 'Aarti Kapoor', 1 ),
+		array( 'Ajay', 'Mr. Ajay Shah', 2 ),
+		array( 'Bipin', 'Mr. Bipin Oberoi', 3 ),
+	);
+	$all = get_posts( array( 'post_type' => 'rs_team', 'posts_per_page' => 200, 'post_status' => array( 'publish', 'draft', 'pending', 'private', 'future', 'trash' ) ) );
+	foreach ( $people as $row ) {
+		list( $word, $name, $pos ) = $row;
+		$found = null;
+		foreach ( $all as $p ) {
+			if ( false !== stripos( $p->post_title, $word ) ) {
+				$found = $p;
+				break;
+			}
+		}
+		if ( ! $found ) {
+			foreach ( rs_default_advisors() as $a ) {
+				if ( $a[0] === $name ) {
+					$id = wp_insert_post( array( 'post_type' => 'rs_team', 'post_status' => 'publish', 'post_title' => $name, 'post_content' => rs_paras_to_blocks( $a[1] ), 'menu_order' => $pos ) );
+					$found = $id && ! is_wp_error( $id ) ? get_post( $id ) : null;
+				}
+			}
+		}
+		if ( ! $found ) {
+			continue;
+		}
+		if ( 'trash' === $found->post_status ) {
+			wp_untrash_post( $found->ID );
+		}
+		wp_update_post( array( 'ID' => $found->ID, 'post_status' => 'publish', 'menu_order' => $pos ) );
+		wp_set_object_terms( $found->ID, 'advisor', 'rs_team_group' );
+		$d = (string) get_post_meta( $found->ID, '_rs_designation', true );
+		if ( '' === $d || 'Board of Advisors' === $d ) {
+			update_post_meta( $found->ID, '_rs_designation', 'Advisor' );
+		}
+	}
+	update_option( 'rs_1140_done', 1 );
+}, 40 );
