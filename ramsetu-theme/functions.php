@@ -5,7 +5,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RS_THEME_VERSION', '1.12.0' );
+define( 'RS_THEME_VERSION', '1.13.0' );
 
 require_once get_template_directory() . '/inc/defaults.php';
 require_once get_template_directory() . '/inc/helpers.php';

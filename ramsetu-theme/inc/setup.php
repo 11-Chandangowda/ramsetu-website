@@ -713,3 +713,50 @@ add_action( 'init', function () {
 	}
 	update_option( 'rs_1111_done', 1 );
 }, 39 );
+
+/**
+ * 1.13.0 (Home page review, 30 Oct): new About and Verticals texts follow the new defaults if the
+ * old ones were never edited; Ajay Shah and Bipin Oberoi join the Advisors (order: Aarti > Ajay > Bipin).
+ */
+add_action( 'init', function () {
+	if ( ! get_option( 'rs_setup_done' ) || get_option( 'rs_1130_done' ) ) {
+		return;
+	}
+	$old = array(
+		'home_about_text' => '9c6496e3c6e33ee9578d46674b43bfb1',
+		'products_title'  => '490875f21168e77e8c00ef1ea104583d',
+		'ra_home_card'    => '52cdb186c73746339f3eaa125b191107',
+		'se_home_card'    => '28e1ec5381bd1e721d0e9908ef2aaca1',
+	);
+	foreach ( $old as $key => $hash ) {
+		$saved = get_theme_mod( 'rs_' . $key, null );
+		if ( null !== $saved && md5( (string) $saved ) === $hash ) {
+			remove_theme_mod( 'rs_' . $key );
+		}
+	}
+	if ( post_type_exists( 'rs_team' ) ) {
+		$order = array( 'Aarti Kapoor' => 1, 'Mr. Ajay Shah' => 2, 'Mr. Bipin Oberoi' => 3 );
+		foreach ( $order as $name => $pos ) {
+			$p = get_posts( array( 'post_type' => 'rs_team', 'title' => $name, 'posts_per_page' => 1, 'post_status' => 'any' ) );
+			if ( ! $p ) {
+				foreach ( rs_default_advisors() as $a ) {
+					if ( $a[0] === $name ) {
+						$id = wp_insert_post( array( 'post_type' => 'rs_team', 'post_status' => 'publish', 'post_title' => $name, 'post_content' => rs_paras_to_blocks( $a[1] ), 'menu_order' => $pos ) );
+						if ( $id && ! is_wp_error( $id ) ) {
+							wp_set_object_terms( $id, 'advisor', 'rs_team_group' );
+						}
+					}
+				}
+				$p = get_posts( array( 'post_type' => 'rs_team', 'title' => $name, 'posts_per_page' => 1, 'post_status' => 'any' ) );
+				if ( ! $p ) {
+					continue;
+				}
+			}
+			wp_update_post( array( 'ID' => $p[0]->ID, 'post_status' => 'publish', 'menu_order' => $pos ) );
+			if ( '' === (string) get_post_meta( $p[0]->ID, '_rs_designation', true ) || 'Board of Advisors' === get_post_meta( $p[0]->ID, '_rs_designation', true ) ) {
+				update_post_meta( $p[0]->ID, '_rs_designation', 'Advisor' );
+			}
+		}
+	}
+	update_option( 'rs_1130_done', 1 );
+}, 39 );

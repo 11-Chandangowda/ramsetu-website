@@ -1110,3 +1110,30 @@ address { font-style: normal; }
   .hb__feat-icon .icon { width: 15px; height: 15px; }
   .hb__actions .btn { flex: 1 1 auto; }
 }
+
+/* ---------- Home page review (1.13.0) ---------- */
+/* White page background (was off-white) */
+body.home .section--tint, body.home .section--tint .brands .brandcard { background: #fff; }
+body.home .hb { background: #fff; }
+/* Bold words in long texts */
+.home-about__body strong { color: var(--ink); font-weight: 700; }
+.leader-home__quote strong { color: #fff; font-weight: 700; }
+.leader-home__quote p:first-child { font-size: clamp(16px, 1.25vw, 18px); line-height: 1.65; color: rgba(255,255,255,.88); font-weight: 400; }
+.leader-home__more { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.leader-home__more .icon { width: 16px; height: 16px; }
+.leader-home__more:hover { color: #fff; }
+/* Verticals: two-colour names, no bridge drawing */
+.c-orange { color: var(--orange-600); }
+.c-blue { color: var(--blue); }
+.brands .brandcard__name .c-orange { color: var(--orange-600); }
+.brands .brandcard__name .c-blue { color: var(--blue); }
+.brandcard__prime { font-weight: 700; font-size: .7em; letter-spacing: 0; }
+.brands .brandcard__list li { font-size: 13.5px; padding: 7px 14px; }
+/* Supporters: institute logo + round photo below it */
+.supporter__media { grid-column: 1; grid-row: span 3; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+@media (max-width: 560px) { .supporter__media { grid-row: auto; align-items: flex-start; } }
+.person--logo .person__photo:not(.person__photo--extra) { background: #fff; border: 1px solid var(--line); }
+.person--logo .person__photo:not(.person__photo--extra) img { object-fit: contain; padding: 10%; box-sizing: border-box; }
+.leader .person__photo--extra { width: 120px; }
+.leader .person__photo--extra img { object-position: center 20%; }
+@media (max-width: 560px) { .leader .person__photo--extra { width: 100px; } }

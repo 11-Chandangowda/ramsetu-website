@@ -126,9 +126,10 @@ $role    = $founder ? get_post_meta( $founder->ID, '_rs_designation', true ) : '
 		</figure>
 		<div class="leader-home__text">
 			<p class="eyebrow" id="founder-h"><?php esc_html_e( 'Our Leadership', 'ramsetu' ); ?></p>
-			<div class="leader-home__quote" data-readmore>
-				<?php rs_the_paras( 'home_founder_message' ); ?>
+			<div class="leader-home__quote">
+				<?php rs_the_paras( 'home_founder_short' ); ?>
 			</div>
+			<a class="readmore-btn leader-home__more" href="<?php echo esc_url( rs_page_url( 'about' ) . '#leadership' ); ?>"><?php esc_html_e( 'Read More', 'ramsetu' ); ?> <?php echo rs_icon( 'arrow' ); // phpcs:ignore ?></a>
 			<p class="leader-home__sign"><strong><?php echo esc_html( $name ); ?></strong><span><?php echo esc_html( $role . ' — RamSetu' ); ?></span></p>
 		</div>
 	</div>
@@ -138,7 +139,7 @@ $role    = $founder ? get_post_meta( $founder->ID, '_rs_designation', true ) : '
 	<div class="container">
 		<div class="section__head section__head--row">
 			<div>
-				<p class="eyebrow"><?php esc_html_e( 'Our Products', 'ramsetu' ); ?></p>
+				<p class="eyebrow"><?php esc_html_e( 'Our Verticals', 'ramsetu' ); ?></p>
 				<h2 class="h2"><?php echo esc_html( rs_mod( 'products_title' ) ); ?></h2>
 			</div>
 			<a class="link-arrow" <?php echo rs_apply_attrs(); // phpcs:ignore ?>><?php echo esc_html( rtrim( rs_mod( 'products_text' ), '.' ) ); ?> <?php echo rs_icon( 'arrow' ); // phpcs:ignore ?></a>
@@ -147,36 +148,30 @@ $role    = $founder ? get_post_meta( $founder->ID, '_rs_designation', true ) : '
 			<a class="brandcard brandcard--orange" href="<?php echo esc_url( rs_page_url( 'ramaffordable' ) ); ?>">
 				<span class="brandcard__photo"><?php echo rs_photo( 'ra_brand_image', 'brand-ramaffordable', '', '', '(max-width: 760px) 92vw, 45vw' ); // phpcs:ignore ?></span>
 				<span class="brandcard__icon"><?php echo rs_icon( 'home' ); // phpcs:ignore ?></span>
-				<span class="brandcard__name">RamAffordable</span>
-				<span class="brandcard__tag"><?php echo esc_html( rs_mod( 'ra_tagline' ) ); ?></span>
+				<span class="brandcard__name"><span class="c-orange">Ram</span><span class="c-blue">Affordable</span></span>
+				<span class="brandcard__tag"><?php echo esc_html( rs_mod( 'ra_vertical_sub' ) ); ?></span>
 				<span class="brandcard__text"><?php echo esc_html( rs_mod( 'ra_home_card' ) ); ?></span>
 				<ul class="brandcard__list">
-					<li><?php esc_html_e( 'Affordable Home Loans', 'ramsetu' ); ?></li>
-					<li><?php esc_html_e( 'Loans Against Property', 'ramsetu' ); ?></li>
-					<li><?php esc_html_e( 'Balance Transfer & Top Up', 'ramsetu' ); ?></li>
+					<?php foreach ( rs_lines( 'ra_home_list' ) as $item ) : ?><li><?php echo esc_html( $item ); ?></li><?php endforeach; ?>
 				</ul>
 				<span class="brandcard__cta"><?php esc_html_e( 'Explore More', 'ramsetu' ); ?> <?php echo rs_icon( 'arrow' ); // phpcs:ignore ?></span>
-				<?php get_template_part( 'parts/bridge-art', null, array( 'class' => 'brandcard__art' ) ); ?>
 			</a>
 			<a class="brandcard brandcard--blue" href="<?php echo esc_url( rs_page_url( 'setuemerging' ) ); ?>">
 				<span class="brandcard__photo"><?php echo rs_photo( 'se_brand_image', 'brand-setuemerging', '', '', '(max-width: 760px) 92vw, 45vw' ); // phpcs:ignore ?></span>
 				<span class="brandcard__icon"><?php echo rs_icon( 'compass' ); // phpcs:ignore ?></span>
-				<span class="brandcard__name">SetuEmerging</span>
+				<span class="brandcard__name"><span class="c-orange">Setu</span><span class="c-blue">Emerging</span> <span class="c-blue brandcard__prime">(Prime)</span></span>
 				<span class="brandcard__tag"><?php echo esc_html( rs_mod( 'se_tagline' ) ); ?></span>
 				<span class="brandcard__text"><?php echo esc_html( rs_mod( 'se_home_card' ) ); ?></span>
 				<ul class="brandcard__list">
-					<li><?php esc_html_e( 'Plant & Machinery', 'ramsetu' ); ?></li>
-					<li><?php esc_html_e( 'Working Capital', 'ramsetu' ); ?></li>
-					<li><?php esc_html_e( 'Hospitality & Education', 'ramsetu' ); ?></li>
+					<?php foreach ( rs_lines( 'se_home_list' ) as $item ) : ?><li><?php echo esc_html( $item ); ?></li><?php endforeach; ?>
 				</ul>
 				<span class="brandcard__cta"><?php esc_html_e( 'Explore More', 'ramsetu' ); ?> <?php echo rs_icon( 'arrow' ); // phpcs:ignore ?></span>
-				<?php get_template_part( 'parts/bridge-art', null, array( 'class' => 'brandcard__art' ) ); ?>
 			</a>
 		</div>
 	</div>
 </section>
 
-<?php $why = rs_pairs( 'why_items' ); $special = rs_pairs( 'special_items' ); ?>
+<?php $why = rs_pairs( 'why_items' ); $special = array(); // RamSetu Special Features removed from the Home page (30 Oct). ?>
 <?php if ( $why || $special ) : ?>
 <section class="section" id="why">
 	<div class="container">

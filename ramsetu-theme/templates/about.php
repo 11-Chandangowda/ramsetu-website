@@ -102,17 +102,26 @@ rs_page_hero( __( 'About Us', 'ramsetu' ), rs_mod( 'about_hero' ), '', 'green', 
 		</div>
 		<div class="supporters">
 			<?php foreach ( $supporters as $p ) : ?>
-				<?php $category = get_post_meta( $p->ID, '_rs_designation', true ); ?>
+				<?php
+				$category = get_post_meta( $p->ID, '_rs_designation', true );
+				$is_logo  = false !== stripos( $p->post_title, 'Institute' );
+				$extra    = rs_supporter_extra_photo( $p->post_title );
+				?>
 				<article class="supporter">
 					<?php if ( $category ) : ?><h3 class="supporter__category"><?php echo esc_html( $category ); ?></h3><?php endif; ?>
 					<div class="leader leader--advisor leader--supporter">
-						<div class="person person--md">
+						<div class="person person--md<?php echo $is_logo ? ' person--logo' : ''; ?>">
+							<div class="supporter__media">
 							<div class="person__photo">
 								<?php if ( has_post_thumbnail( $p ) ) : ?>
-									<?php echo get_the_post_thumbnail( $p, 'rs-portrait', array( 'alt' => esc_attr( $p->post_title ) ) ); ?>
+									<?php echo get_the_post_thumbnail( $p, $is_logo ? 'medium' : 'rs-portrait', array( 'alt' => esc_attr( $is_logo ? $p->post_title . ' logo' : $p->post_title ) ) ); ?>
 								<?php else : ?>
 									<span class="person__initials" aria-hidden="true"><?php echo esc_html( rs_initials( $p->post_title ) ); ?></span>
 								<?php endif; ?>
+							</div>
+							<?php if ( $extra ) : ?>
+								<div class="person__photo person__photo--extra"><img src="<?php echo esc_url( $extra ); ?>" alt="<?php esc_attr_e( 'Sanjeev Verma, Founder, MD & CEO, RamSetu', 'ramsetu' ); ?>" width="300" height="300" loading="lazy"></div>
+							<?php endif; ?>
 							</div>
 							<div class="person__body"><h4 class="person__name"><?php echo esc_html( $p->post_title ); ?></h4></div>
 						</div>

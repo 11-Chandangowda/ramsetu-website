@@ -113,14 +113,26 @@ function rs_defaults() {
 
 		/* Home – about + leadership */
 		'home_about_title'     => 'Bridging the Gap Between You and the Right Financial Solutions',
-		'home_about_text'      => "RamSetu Financial Services is a solution providing institution connecting individuals and businesses with suitable loan and financial solutions from leading banks and NBFCs. Backed by professionals with 32+ years of experience in banking, NBFCs and lending, RamSetu is focused on making formal finance more accessible across India, particularly in smaller towns and emerging markets.\n\nWe serve MSMEs, entrepreneurs, self-employed professionals and salaried individuals with access to a range of lending solutions, including Home Loans, Loan Against Property (LAP), Business Loans, Working Capital Loans, Plant & Machinery Loans, Property Purchase Loans, Lease Rental Discounting (LRD) and structured finance solutions.\n\nWhether you are looking to buy a home, expand your business, purchase property, invest in equipment or meet working capital requirements, RamSetu helps simplify the financing journey by understanding your requirements and connecting you with relevant lending partners.\n\nOur focus is to bridge the gap between customers and formal financial institutions, making the process of accessing credit simpler, more transparent and accessible.",
+		'home_about_text'      => "RamSetu Financial Services is a solution providing institution connecting individuals and businesses with suitable loan and financial solutions from leading banks and NBFCs. Backed by professionals with 32+ years of experience in banking, NBFCs and lending, RamSetu is focused on making formal finance more accessible across India, particularly in smaller towns and emerging markets.\n\nWe serve Underserved, Underpenetrated, and New-to-Credit customers through a range of affordable lending solutions, including **Home Loans and Loans Against Property**, expanding access to formal credit.\n\nFor the prime segment, we offer **tailored financing solutions** to support business growth and expansion, including **Plant & Machinery Loans, Lease Rental Discounting and Warehouse Discounting, Solar & Equipment Financing, and specialised lending solutions for the Education and Hospitality industries**.\n\nOur focus is to bridge the gap between customers and formal financial institutions, making the process of accessing credit simpler, more transparent and accessible.",
 		'home_founder_message' => "With over 32 years of experience across leading financial institutions including IDBI Bank, Citi Bank, ICICI Bank, DHFL, YES Bank, RBL Bank, AXIS Finance and IREP Credit Capital (Viksit Capital), I have had the opportunity to build and scale businesses across Affordable Housing, Home Loans, LAP, Micro-LAP and Wholesale Lending.\n\nOver the years, I have focused on building businesses from the ground up. As Deputy CEO, I worked extensively across Tier 4 and Tier 5 markets, serving nearly 14,000 customers through 93 branches across Andhra Pradesh, Telangana and Karnataka, with an AUM of approximately ₹700 Cr. I also led the launch of 25 branches in Karnataka from ground zero, building teams, processes, governance and technology capabilities while maintaining strong asset quality.\n\nBefore this, as Business Head at Axis Finance, I built the Emerging Market Wholesale business from scratch, taking it across 42 locations and building a ₹3,000+ Cr portfolio, focused on secured lending to businesses across emerging sectors.\n\nRamSetu Financial Services is the culmination of this journey and our vision to bridge the gap between financial institutions and underserved, emerging and growth-oriented customers across India.\n\nThrough our two verticals—RamAffordable and SetuEmerging—we aim to address diverse customer needs, from affordable secured lending to customised and structured financing solutions.\n\nWe aspire to build RamSetu as a trusted, transparent and solution-oriented financial services institution, creating long-term value for our customers, partners and stakeholders.",
+		'home_founder_short'   => "With over **32 years of experience** across leading financial institutions, including **IDBI Bank, Citi, ICICI Bank, YES Bank, RBL Bank, AXIS Finance and IREP Credit Capital (Viksit Capital)**, I have built and scaled businesses across Affordable Housing, Home Loans, LAP, Micro-LAP and Wholesale Lending. My experience includes expanding operations across Tier 4 and Tier 5 markets, serving nearly 14,000 customers through 93 branches, and building a ₹3,000+ Cr wholesale lending portfolio.\n\n**RamSetu Financial Services** brings this experience together with a vision to bridge the gap between financial institutions and underserved, emerging and growth-oriented customers across India. Through **RamAffordable** and **SetuEmerging**, we offer affordable secured lending and customised financing solutions, with a commitment to trust, transparency and sustainable, long-term value creation.",
 
 		/* Home – products */
-		'products_title' => 'Explore our Products',
+		'products_title' => 'Explore Our Verticals',
 		'products_text'  => 'Find the loan that works the best for you.',
-		'ra_home_card'   => 'Loan solutions designed to help you move closer to owning your home or growing your business, with financing options suited to your needs.',
-		'se_home_card'   => 'Strategic financing and advisory solutions designed around your business needs, financial goals and growth plans.',
+		'ra_home_card'   => 'Secured Financial Solutions for Underserved, Underpenetrated and New-to-Credit Customers',
+		'ra_vertical_sub' => 'Affordable Home Loans and Loans Against Property',
+		'ra_home_list'   => "Affordable Home Loans
+Secured Loans Against Property
+Balance Transfer and Top Up",
+		'se_home_card'   => 'Strategic Financing and Advisory Solutions for Emerging and Growth-Oriented Customers',
+		'se_home_list'   => "Plant and Machinery Loans
+Loans for Solar Funding
+Loans for Equipment Funding
+Loans for Schools and Colleges
+Loans for Hotels and Restaurants
+Lease Rental Discounting and Warehouse Discounting
+Balance Transfer and Top Up",
 
 		/* Home – Why RamSetu (approved in Round 1 review) */
 		'why_title' => 'Why RamSetu',
@@ -221,9 +233,14 @@ function rs_list( $key ) {
 	return array_values( array_filter( array_map( 'trim', explode( ',', (string) rs_mod( $key ) ) ) ) );
 }
 
-/** Echo paragraphs for a multi-paragraph field. */
+/** Escape text and turn **words** into bold. */
+function rs_bold( $text ) {
+	return preg_replace( '/\*\*(.+?)\*\*/u', '<strong>$1</strong>', esc_html( $text ) );
+}
+
+/** Echo paragraphs for a multi-paragraph field (**words** show in bold). */
 function rs_the_paras( $key, $class = '' ) {
 	foreach ( rs_paras( $key ) as $p ) {
-		printf( '<p%s>%s</p>', $class ? ' class="' . esc_attr( $class ) . '"' : '', esc_html( $p ) );
+		printf( '<p%s>%s</p>', $class ? ' class="' . esc_attr( $class ) . '"' : '', rs_bold( $p ) );
 	}
 }

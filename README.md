@@ -6,7 +6,7 @@ Built by Chandan Gowda VG ([@11-Chandangowda](https://github.com/11-Chandangowda
 
 | Folder | Version | What it is |
 |---|---|---|
-| `ramsetu-theme` | 1.12.0 | Classic PHP theme with every page of the site |
+| `ramsetu-theme` | 1.13.0 | Classic PHP theme with every page of the site |
 | `ramsetu-leads` | 1.4.1 | Lead capture and management plugin |
 
 ## Theme: `ramsetu-theme`
