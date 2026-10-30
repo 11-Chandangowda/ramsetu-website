@@ -6,14 +6,14 @@ Built by Chandan Gowda VG ([@11-Chandangowda](https://github.com/11-Chandangowda
 
 | Folder | Version | What it is |
 |---|---|---|
-| `ramsetu-theme` | 1.7.0 | Classic PHP theme with every page of the site |
+| `ramsetu-theme` | 1.12.0 | Classic PHP theme with every page of the site |
 | `ramsetu-leads` | 1.4.1 | Lead capture and management plugin |
 
 ## Theme: `ramsetu-theme`
 
 - **Pages:**
-  - Home, with a full-width photo slider and founder message
-  - About Us: vision, mission, leadership, advisory board, presence and roadmap
+  - Home, with a product slider (one slide per loan type) and founder message
+  - About Us: vision, mission, leadership, advisors, supporters & partners, presence and roadmap
   - Product pages for RamAffordable and SetuEmerging (Prime)
   - Branch Locator, Contact Us, Become a Partner, Apply Now and Policies
 - **Editable content:** almost every text and photo can be changed in **Appearance → Customize**, with defaults in `inc/defaults.php`. Lists are one item per line.

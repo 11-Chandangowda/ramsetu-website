@@ -73,7 +73,7 @@ rs_page_hero( __( 'About Us', 'ramsetu' ), rs_mod( 'about_hero' ), '', 'green', 
 
 		<?php $advisors = rs_team( 'advisor' ); ?>
 		<?php if ( $advisors || rs_show_placeholders() ) : ?>
-			<h3 class="h3 subhead" id="advisors"><?php esc_html_e( 'Our Board of Advisors', 'ramsetu' ); ?></h3>
+			<h3 class="h3 subhead" id="advisors"><?php esc_html_e( 'Our Advisors', 'ramsetu' ); ?></h3>
 			<?php if ( $advisors ) : ?>
 				<div class="leaders leaders--advisors">
 					<?php foreach ( $advisors as $p ) : ?>
@@ -86,11 +86,74 @@ rs_page_hero( __( 'About Us', 'ramsetu' ), rs_mod( 'about_hero' ), '', 'green', 
 					<?php endforeach; ?>
 				</div>
 			<?php else : ?>
-				<?php rs_admin_hint( __( 'Hidden from visitors until you add people under Team & Advisors in the "Board of Advisors" group.', 'ramsetu' ) ); ?>
+				<?php rs_admin_hint( __( 'Hidden from visitors until you add people under Team & Advisors in the "Advisors" group.', 'ramsetu' ) ); ?>
 			<?php endif; ?>
 		<?php endif; ?>
 	</div>
 </section>
+
+<?php $supporters = rs_team( 'supporter' ); ?>
+<?php if ( $supporters ) : ?>
+<section class="section section--tint" id="supporters">
+	<div class="container">
+		<div class="section__head">
+			<p class="eyebrow"><?php esc_html_e( 'With gratitude', 'ramsetu' ); ?></p>
+			<h2 class="h2"><?php esc_html_e( 'Our Steadfast Supporters & Partners', 'ramsetu' ); ?></h2>
+		</div>
+		<div class="supporters">
+			<?php foreach ( $supporters as $p ) : ?>
+				<?php $category = get_post_meta( $p->ID, '_rs_designation', true ); ?>
+				<article class="supporter">
+					<?php if ( $category ) : ?><h3 class="supporter__category"><?php echo esc_html( $category ); ?></h3><?php endif; ?>
+					<div class="leader leader--advisor leader--supporter">
+						<div class="person person--md">
+							<div class="person__photo">
+								<?php if ( has_post_thumbnail( $p ) ) : ?>
+									<?php echo get_the_post_thumbnail( $p, 'rs-portrait', array( 'alt' => esc_attr( $p->post_title ) ) ); ?>
+								<?php else : ?>
+									<span class="person__initials" aria-hidden="true"><?php echo esc_html( rs_initials( $p->post_title ) ); ?></span>
+								<?php endif; ?>
+							</div>
+							<div class="person__body"><h4 class="person__name"><?php echo esc_html( $p->post_title ); ?></h4></div>
+						</div>
+						<?php if ( trim( $p->post_content ) ) : ?>
+							<div class="leader__bio"><?php echo wp_kses_post( wpautop( $p->post_content ) ); ?></div>
+						<?php endif; ?>
+					</div>
+				</article>
+			<?php endforeach; ?>
+		</div>
+	</div>
+</section>
+<?php endif; ?>
+
+<?php $team = apply_filters( 'rs_show_team', false ) ? rs_team( 'team' ) : array(); // Meet RamSetu Team hidden for now (25 Oct). ?>
+<?php if ( $team ) : ?>
+<section class="section" id="team">
+	<div class="container">
+		<div class="section__head">
+			<p class="eyebrow"><?php esc_html_e( 'Our People', 'ramsetu' ); ?></p>
+			<h2 class="h2"><?php esc_html_e( 'Meet RamSetu Team', 'ramsetu' ); ?></h2>
+		</div>
+		<ul class="team-grid">
+			<?php foreach ( $team as $p ) : ?>
+				<li class="team-card">
+					<div class="team-card__photo">
+						<?php if ( has_post_thumbnail( $p ) ) : ?>
+							<?php echo get_the_post_thumbnail( $p, 'rs-portrait', array( 'alt' => esc_attr( $p->post_title ) ) ); ?>
+						<?php else : ?>
+							<span class="person__initials" aria-hidden="true"><?php echo esc_html( rs_initials( $p->post_title ) ); ?></span>
+						<?php endif; ?>
+					</div>
+					<h3 class="team-card__name"><?php echo esc_html( $p->post_title ); ?></h3>
+					<?php $role = get_post_meta( $p->ID, '_rs_designation', true ); ?>
+					<?php if ( $role ) : ?><p class="team-card__role"><?php echo esc_html( $role ); ?></p><?php endif; ?>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+	</div>
+</section>
+<?php endif; ?>
 
 <?php get_template_part( 'parts/partners', null, array( 'id' => 'partners' ) ); ?>
 

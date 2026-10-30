@@ -5,47 +5,96 @@
 defined( 'ABSPATH' ) || exit;
 get_header();
 
-$slide_icons = array( 1 => 'store', 2 => 'home', 3 => 'compass' );
-$slide_tones = array( 1 => 'orange', 2 => 'green', 3 => 'blue' );
-$slide_apply = array( 1 => 'business_loan', 2 => 'home_loan', 3 => 'consulting' );
-$slide_photo = array(
-	1 => array( 'slide-business', __( 'A smiling shop owner at the counter of his store', 'ramsetu' ) ),
-	2 => array( 'slide-home', __( 'A family relaxing together in their home', 'ramsetu' ) ),
-	3 => array( 'slide-advisory', __( 'A business owner shaking hands with a RamSetu advisor', 'ramsetu' ) ),
+$hs_photo = array(
+	1 => array( 'hs-home', __( 'A happy family at home', 'ramsetu' ) ),
+	2 => array( 'hs-lap', __( 'A property owner in front of his building', 'ramsetu' ) ),
+	3 => array( 'hs-business', __( 'A smiling kirana shop owner at his store', 'ramsetu' ) ),
+	4 => array( 'hs-solar', __( 'A business owner in front of solar panels and equipment', 'ramsetu' ) ),
+	5 => array( 'hs-machinery', __( 'A business owner on his factory floor with machinery', 'ramsetu' ) ),
+	6 => array( 'hs-education', __( 'A business owner in front of a college and a hotel', 'ramsetu' ) ),
 );
+$hs_tones  = array( 1 => 'orange', 2 => 'blue', 3 => 'green', 4 => 'orange', 5 => 'blue', 6 => 'green' );
+$hs_slides = array();
+for ( $i = 1; $i <= 6; $i++ ) {
+	if ( '' !== trim( (string) rs_mod( "hs{$i}_title" ) ) ) {
+		$hs_slides[] = $i;
+	}
+}
+$hs_total = count( $hs_slides );
+
+/** Small symbol for a feature box, picked from its words. */
+$hs_icon = function ( $text ) {
+	$t = strtolower( $text );
+	foreach ( array( 'tenure' => 'calendar', 'year' => 'calendar', 'door' => 'door', 'document' => 'file', 'interest' => 'percent', 'rate' => 'percent', 'loan' => 'rupee', '₹' => 'rupee', 'approv' => 'clock' ) as $word => $icon ) {
+		if ( false !== strpos( $t, $word ) ) {
+			return $icon;
+		}
+	}
+	return 'check';
+};
 ?>
 
-<section class="hero hero--cover" aria-roledescription="carousel" aria-label="<?php esc_attr_e( 'Highlights', 'ramsetu' ); ?>" data-slider>
+<?php if ( $hs_total ) : ?>
+<section class="hero hb-hero" aria-roledescription="carousel" aria-label="<?php esc_attr_e( 'Our loans', 'ramsetu' ); ?>" data-slider>
 	<div class="hero__track">
-		<?php for ( $i = 1; $i <= 3; $i++ ) : ?>
-			<?php $tag = 1 === $i ? 'h1' : 'h2'; ?>
-			<div class="slide slide--<?php echo esc_attr( $slide_tones[ $i ] ); ?><?php echo 1 === $i ? ' is-active' : ''; ?>" role="group" aria-roledescription="slide" aria-label="<?php echo esc_attr( $i . ' / 3' ); ?>" data-slide<?php echo 1 === $i ? '' : ' aria-hidden="true"'; ?>>
-				<div class="slide__bg">
-					<?php echo rs_photo( "slide{$i}_image", $slide_photo[ $i ][0], $slide_photo[ $i ][1], 'slide__img', '100vw', 1 === $i ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				</div>
-				<div class="container slide__inner">
-					<div class="slide__copy">
-						<p class="eyebrow"><?php echo esc_html( rs_mod( "slide{$i}_eyebrow" ) ); ?></p>
-						<<?php echo $tag; // phpcs:ignore ?> class="slide__title"><?php echo esc_html( rs_mod( "slide{$i}_title" ) ); ?></<?php echo $tag; // phpcs:ignore ?>>
-						<p class="slide__text"><?php echo esc_html( rs_mod( "slide{$i}_text" ) ); ?></p>
-						<div class="slide__actions">
-							<a class="btn btn--primary" href="<?php echo esc_url( rs_link( rs_mod( "slide{$i}_link" ) ) ); ?>"<?php echo 1 === $i ? '' : ' tabindex="-1"'; ?>><?php echo esc_html( rs_mod( "slide{$i}_cta" ) ); ?> <?php echo rs_icon( 'arrow' ); // phpcs:ignore ?></a>
-							<a class="btn btn--outline-white" <?php echo rs_apply_attrs( $slide_apply[ $i ] ); // phpcs:ignore ?><?php echo 1 === $i ? '' : ' tabindex="-1"'; ?>><?php esc_html_e( 'Apply Now', 'ramsetu' ); ?></a>
+		<?php foreach ( $hs_slides as $k => $i ) : ?>
+			<?php
+			$first = 0 === $k;
+			$tag   = $first ? 'h1' : 'h2';
+			$tab   = $first ? '' : ' tabindex="-1"';
+			$feats = array_slice( rs_lines( "hs{$i}_chips" ), 0, 4 );
+			$photo = rs_photo( "hs{$i}_image", $hs_photo[ $i ][0], $hs_photo[ $i ][1], 'hb__img', '(max-width: 900px) 90vw, 460px', $first );
+			?>
+			<div class="slide hb hb--<?php echo esc_attr( $hs_tones[ $i ] ); ?><?php echo $first ? ' is-active' : ''; ?>" role="group" aria-roledescription="slide" aria-label="<?php echo esc_attr( ( $k + 1 ) . ' / ' . $hs_total ); ?>" data-slide<?php echo $first ? '' : ' aria-hidden="true"'; ?>>
+				<div class="container hb__inner">
+					<div class="hb__copy slide__copy">
+						<?php if ( rs_mod( "hs{$i}_brand" ) ) : ?>
+							<p class="hb__brand"><?php echo esc_html( rs_mod( "hs{$i}_brand" ) ); ?></p>
+						<?php endif; ?>
+						<<?php echo $tag; // phpcs:ignore ?> class="hb__title"><?php echo nl2br( esc_html( trim( rs_mod( "hs{$i}_title" ) ) ) ); // phpcs:ignore ?></<?php echo $tag; // phpcs:ignore ?>>
+						<?php if ( rs_mod( "hs{$i}_text" ) ) : ?>
+							<p class="hb__text"><?php echo esc_html( rs_mod( "hs{$i}_text" ) ); ?></p>
+						<?php endif; ?>
+						<?php if ( $feats ) : ?>
+							<ul class="hb__feats">
+								<?php foreach ( $feats as $f ) : ?>
+									<li><span class="hb__feat-icon"><?php echo rs_icon( $hs_icon( $f ) ); // phpcs:ignore ?></span><span><?php echo esc_html( $f ); ?></span></li>
+								<?php endforeach; ?>
+							</ul>
+						<?php endif; ?>
+						<div class="hb__actions">
+							<a class="btn btn--primary" <?php echo rs_apply_attrs( rs_mod( "hs{$i}_apply" ) ); // phpcs:ignore ?><?php echo $tab; // phpcs:ignore ?>><?php esc_html_e( 'Apply Now', 'ramsetu' ); ?> <?php echo rs_icon( 'arrow' ); // phpcs:ignore ?></a>
+							<?php if ( rs_mod( "hs{$i}_link" ) ) : ?>
+								<a class="btn btn--outline hb__more" href="<?php echo esc_url( rs_link( rs_mod( "hs{$i}_link" ) ) ); ?>"<?php echo $tab; // phpcs:ignore ?>><?php esc_html_e( 'Learn More', 'ramsetu' ); ?> <?php echo rs_icon( 'arrow' ); // phpcs:ignore ?></a>
+							<?php endif; ?>
+						</div>
+					</div>
+					<div class="hb__visual">
+						<span class="hb__shape hb__shape--a" aria-hidden="true"></span>
+						<span class="hb__shape hb__shape--b" aria-hidden="true"></span>
+						<div class="hb__frame">
+							<?php if ( $photo ) : ?>
+								<?php echo $photo; // phpcs:ignore ?>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>
 			</div>
-		<?php endfor; ?>
+		<?php endforeach; ?>
 	</div>
-	<div class="container hero__controls">
-		<div class="hero__dots" role="tablist" aria-label="<?php esc_attr_e( 'Choose slide', 'ramsetu' ); ?>">
-			<?php for ( $i = 1; $i <= 3; $i++ ) : ?>
-				<button type="button" role="tab" class="hero__dot<?php echo 1 === $i ? ' is-active' : ''; ?>" aria-selected="<?php echo 1 === $i ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr( rs_mod( "slide{$i}_tab" ) ); ?>" data-dot="<?php echo (int) ( $i - 1 ); ?>"><span><?php echo esc_html( rs_mod( "slide{$i}_tab" ) ); ?></span></button>
-			<?php endfor; ?>
+	<?php if ( $hs_total > 1 ) : ?>
+		<div class="container hero__controls hb__controls">
+			<div class="hero__dots" role="tablist" aria-label="<?php esc_attr_e( 'Choose a loan', 'ramsetu' ); ?>">
+				<?php foreach ( $hs_slides as $k => $i ) : ?>
+					<?php $label = rs_mod( "hs{$i}_tab" ) ? rs_mod( "hs{$i}_tab" ) : wp_strip_all_tags( rs_mod( "hs{$i}_title" ) ); ?>
+					<button type="button" role="tab" class="hero__dot<?php echo 0 === $k ? ' is-active' : ''; ?>" aria-selected="<?php echo 0 === $k ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr( $label ); ?>" data-dot="<?php echo (int) $k; ?>"><span><?php echo esc_html( $label ); ?></span></button>
+				<?php endforeach; ?>
+			</div>
+			<button type="button" class="hero__pause" data-pause aria-label="<?php esc_attr_e( 'Pause slideshow', 'ramsetu' ); ?>"><span aria-hidden="true">❚❚</span></button>
 		</div>
-		<button type="button" class="hero__pause" data-pause aria-label="<?php esc_attr_e( 'Pause slideshow', 'ramsetu' ); ?>"><span aria-hidden="true">❚❚</span></button>
-	</div>
+	<?php endif; ?>
 </section>
+<?php endif; ?>
 
 <section class="section">
 	<div class="container home-about">

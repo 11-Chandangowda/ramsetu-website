@@ -91,7 +91,7 @@ function rs_show_placeholders() {
 }
 
 function rs_initials( $name ) {
-	$words = preg_split( '/\s+/', trim( $name ) );
+	$words = preg_split( '/\s+/', trim( preg_replace( '/^(mr|mrs|ms|dr|prof)\.?\s+/i', '', trim( $name ) ) ) );
 	$i     = '';
 	foreach ( array_slice( $words, 0, 2 ) as $w ) {
 		$i .= mb_substr( $w, 0, 1 );

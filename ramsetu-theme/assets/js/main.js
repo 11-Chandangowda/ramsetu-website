@@ -86,7 +86,7 @@
     var slides = slider.querySelectorAll('[data-slide]');
     var dots = slider.querySelectorAll('[data-dot]');
     var pauseBtn = slider.querySelector('[data-pause]');
-    var current = 0, timer = null, paused = reduceMotion, DELAY = 6500;
+    var current = 0, timer = null, paused = reduceMotion, DELAY = 4000;
 
     var show = function (n) {
       current = (n + slides.length) % slides.length;

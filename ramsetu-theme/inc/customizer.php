@@ -119,16 +119,19 @@ add_action( 'customize_register', function ( WP_Customize_Manager $wp ) {
 		),
 	);
 
-	for ( $i = 1; $i <= 3; $i++ ) {
+	for ( $i = 1; $i <= 6; $i++ ) {
 		/* translators: %d slide number */
 		$n = sprintf( __( 'Slide %d', 'ramsetu' ), $i );
-		$sections['rs_home']['fields'][ "slide{$i}_tab" ]     = array( $n . ' – short label (slide switcher)', 'text' );
-		$sections['rs_home']['fields'][ "slide{$i}_eyebrow" ] = array( $n . ' – small heading', 'text' );
-		$sections['rs_home']['fields'][ "slide{$i}_title" ]   = array( $n . ' – main heading', 'textarea' );
-		$sections['rs_home']['fields'][ "slide{$i}_text" ]    = array( $n . ' – text', 'textarea' );
-		$sections['rs_home']['fields'][ "slide{$i}_cta" ]     = array( $n . ' – button text', 'text' );
-		$sections['rs_home']['fields'][ "slide{$i}_link" ]    = array( $n . ' – button link', 'text' );
-		$sections['rs_home']['fields'][ "slide{$i}_image" ]   = array( $n . ' – photo (leave empty to keep the built-in photo; landscape 4:3 works best)', 'image' );
+		$sections['rs_home']['fields'] += array(
+			"hs{$i}_tab"    => array( $n . ' – short label (slide switcher)', 'text' ),
+			"hs{$i}_brand"  => array( $n . ' – small heading (RamAffordable / SetuEmerging)', 'text' ),
+			"hs{$i}_title"  => array( $n . ' – main heading (Enter for a new line; leave empty to hide this slide)', 'textarea' ),
+			"hs{$i}_text"   => array( $n . ' – sub heading', 'textarea' ),
+			"hs{$i}_chips"  => array( $n . ' – feature boxes (one per line, up to 4)', 'textarea' ),
+			"hs{$i}_link"   => array( $n . ' – "Learn More" link (page slug, e.g. ramaffordable#lap)', 'text' ),
+			"hs{$i}_apply"  => array( $n . ' – Apply Now loan type (home_loan, lap, plant_machinery, working_capital, hospitality, education, lrd)', 'text' ),
+			"hs{$i}_image"  => array( $n . ' – photo (leave empty to keep the built-in one; portrait, about 1000 x 1080 px, person in the centre)', 'image' ),
+		);
 	}
 	$sections['rs_home']['fields'] += array(
 		'home_about_title'     => array( __( 'About section – heading', 'ramsetu' ), 'text' ),

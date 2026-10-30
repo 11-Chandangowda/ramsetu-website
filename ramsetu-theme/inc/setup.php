@@ -278,7 +278,7 @@ function rs_import_bundled_image( $file, $alt, $parent = 0 ) {
 	if ( ! $tmp || ! copy( $src, $tmp ) ) {
 		return 0;
 	}
-	$id = media_handle_sideload( array( 'name' => $file, 'tmp_name' => $tmp ), $parent, $alt );
+	$id = media_handle_sideload( array( 'name' => basename( $file ), 'tmp_name' => $tmp ), $parent, $alt );
 	if ( is_wp_error( $id ) ) {
 		@unlink( $tmp ); // phpcs:ignore
 		return 0;
@@ -396,7 +396,7 @@ function rs_menu_is_theme_made( $menu ) {
 	$known = array(
 		'Our Products', 'RamAffordable – Home & Business Loans', 'Affordable Home Loans', 'Affordable Business Loans',
 		'SetuEmerging – Structured Finance & Advisory', 'About Us', 'About RamSetu', 'Vision & Mission', 'Our Leadership',
-		'Our Presence', 'Future Roadmap', 'Refer & Earn', 'Become a Partner', 'Branch Locator', 'Locate Branch Near You',
+		'Our Presence', 'Future Roadmap', 'Meet RamSetu Team', 'Refer & Earn', 'Become a Partner', 'Branch Locator', 'Locate Branch Near You',
 		'Contact Us', 'RamAffordable', 'SetuEmerging', 'Home', 'Apply Now', 'Policies',
 	);
 	$items = wp_get_nav_menu_items( $menu );
@@ -540,3 +540,176 @@ add_action( 'template_redirect', function () {
 		}
 	}
 } );
+
+
+/**
+ * 1.8.0 (About Us update, 17 Oct): "Our Advisors" with designations, Our Steadfast Supporters
+ * & Partners, Meet RamSetu Team, and the team link in the About Us menu.
+ */
+add_action( 'init', function () {
+	if ( ! get_option( 'rs_setup_done' ) || get_option( 'rs_180_done' ) ) {
+		return;
+	}
+	if ( ! post_type_exists( 'rs_team' ) || ! taxonomy_exists( 'rs_team_group' ) ) {
+		return; // plugin not active yet: runs on a later page load
+	}
+	foreach ( array( 'supporter' => 'Supporters & Partners', 'team' => 'RamSetu Team' ) as $slug => $name ) {
+		if ( ! term_exists( $slug, 'rs_team_group' ) ) {
+			wp_insert_term( $name, 'rs_team_group', array( 'slug' => $slug ) );
+		}
+	}
+
+	// Advisors: no "Board" wording; designations as RamSetu gave them.
+	$designations = rs_advisor_designations();
+	foreach ( get_posts( array( 'post_type' => 'rs_team', 'posts_per_page' => 50, 'post_status' => 'any', 'tax_query' => array( array( 'taxonomy' => 'rs_team_group', 'field' => 'slug', 'terms' => 'advisor' ) ) ) ) as $p ) {
+		$current = (string) get_post_meta( $p->ID, '_rs_designation', true );
+		if ( in_array( $current, array( '', 'Board of Advisors' ), true ) ) {
+			update_post_meta( $p->ID, '_rs_designation', $designations[ $p->post_title ] ?? 'Advisor' );
+		}
+	}
+	// Aarti Kapoor is confirmed again (17 Oct); Bipin Oberoi and Ajay Shah stay in draft until RamSetu confirms.
+	$aarti = get_posts( array( 'post_type' => 'rs_team', 'title' => 'Aarti Kapoor', 'posts_per_page' => 1, 'post_status' => 'draft' ) );
+	if ( $aarti ) {
+		wp_update_post( array( 'ID' => $aarti[0]->ID, 'post_status' => 'publish' ) );
+	}
+	$group = get_term_by( 'slug', 'advisor', 'rs_team_group' );
+	if ( $group && 'Board of Advisors' === $group->name ) {
+		wp_update_term( $group->term_id, 'rs_team_group', array( 'name' => 'Advisors' ) );
+	}
+
+	$add = function ( $name, $designation, $bio, $group_slug, $order ) {
+		if ( get_posts( array( 'post_type' => 'rs_team', 'title' => $name, 'posts_per_page' => 1, 'post_status' => 'any', 'fields' => 'ids' ) ) ) {
+			return;
+		}
+		$id = wp_insert_post( array(
+			'post_type'    => 'rs_team',
+			'post_status'  => 'publish',
+			'post_title'   => $name,
+			'post_content' => $bio ? rs_paras_to_blocks( $bio ) : '',
+			'menu_order'   => $order,
+		) );
+		if ( $id && ! is_wp_error( $id ) ) {
+			update_post_meta( $id, '_rs_designation', $designation );
+			wp_set_object_terms( $id, $group_slug, 'rs_team_group' );
+		}
+	};
+	foreach ( rs_default_supporters() as $i => $s ) {
+		$add( $s[0], $s[1], $s[2], 'supporter', $i + 1 );
+	}
+	foreach ( rs_default_team() as $i => $t ) {
+		$add( $t[0], $t[1], '', 'team', $i + 1 );
+	}
+
+	// "Meet RamSetu Team" under About Us, right after Our Leadership (theme-made menu items only).
+	$menu  = wp_get_nav_menu_object( 'Main menu' );
+	$items = $menu ? wp_get_nav_menu_items( $menu ) : array();
+	$about = null;
+	$lead  = null;
+	$has   = false;
+	foreach ( (array) $items as $item ) {
+		$title = html_entity_decode( $item->title, ENT_QUOTES, 'UTF-8' );
+		if ( 'About Us' === $title && ! (int) $item->menu_item_parent ) {
+			$about = $item;
+		}
+		if ( 'Our Leadership' === $title ) {
+			$lead = $item;
+		}
+		if ( 'Meet RamSetu Team' === $title ) {
+			$has = true;
+		}
+	}
+	$about_page = get_page_by_path( 'about' );
+	if ( $menu && $about && $lead && ! $has && $about_page ) {
+		foreach ( $items as $item ) {
+			if ( (int) $item->menu_order > (int) $lead->menu_order ) {
+				wp_update_post( array( 'ID' => $item->ID, 'menu_order' => (int) $item->menu_order + 1 ) );
+			}
+		}
+		wp_update_nav_menu_item( $menu->term_id, 0, array(
+			'menu-item-title'     => 'Meet RamSetu Team',
+			'menu-item-url'       => get_permalink( $about_page ) . '#team',
+			'menu-item-type'      => 'custom',
+			'menu-item-status'    => 'publish',
+			'menu-item-parent-id' => $about->ID,
+			'menu-item-position'  => (int) $lead->menu_order + 1,
+		) );
+	}
+	update_option( 'rs_180_done', 1 );
+}, 37 );
+
+/**
+ * Photos for Supporters & Partners and the Team, shipped in assets/img/people/.
+ * Runs once per theme version, so photos added in a later version are picked up;
+ * only fills a profile that has no photo yet (a photo set in Team & Advisors is kept).
+ */
+add_action( 'init', function () {
+	if ( ! get_option( 'rs_180_done' ) || RS_THEME_VERSION === get_option( 'rs_people_photos' ) ) {
+		return;
+	}
+	$list = array();
+	foreach ( rs_default_supporters() as $s ) {
+		$list[] = array( $s[0], $s[3], $s[1] );
+	}
+	foreach ( rs_default_team() as $t ) {
+		$list[] = array( $t[0], $t[2], $t[1] );
+	}
+	foreach ( $list as $row ) {
+		if ( ! file_exists( get_template_directory() . '/assets/img/people/' . $row[1] ) ) {
+			continue;
+		}
+		$p = get_posts( array( 'post_type' => 'rs_team', 'title' => $row[0], 'posts_per_page' => 1, 'post_status' => 'any' ) );
+		if ( $p && ! has_post_thumbnail( $p[0] ) ) {
+			$id = rs_import_bundled_image( 'people/' . $row[1], $row[0] . ', ' . $row[2], $p[0]->ID );
+			if ( $id ) {
+				set_post_thumbnail( $p[0], $id );
+			}
+		}
+	}
+	update_option( 'rs_people_photos', RS_THEME_VERSION );
+}, 38 );
+
+/**
+ * 1.9.0 (website changes, 20 Oct): "Secured Business Loans", Phase 1 roadmap text without the
+ * ₹10 crore target, three team members removed (kept as drafts), and the Siddaganga
+ * entry renamed to include "Tumkur, Karnataka".
+ */
+add_action( 'init', function () {
+	if ( ! get_option( 'rs_180_done' ) || get_option( 'rs_190_done' ) ) {
+		return;
+	}
+	$old = array(
+		'ra_tagline' => '48beb72f9549f1c7e9bba6fb9e86be70',
+		'roadmap'    => '5672338638276a9ea89b36db7b0cd801',
+	);
+	foreach ( $old as $key => $hash ) {
+		$saved = get_theme_mod( 'rs_' . $key, null );
+		if ( null !== $saved && md5( (string) $saved ) === $hash ) {
+			remove_theme_mod( 'rs_' . $key );
+		}
+	}
+	foreach ( array( 'Ranganatha K L', 'Ravichandra H R', 'Nandish C P' ) as $name ) {
+		foreach ( get_posts( array( 'post_type' => 'rs_team', 'title' => $name, 'posts_per_page' => 5, 'post_status' => 'publish' ) ) as $p ) {
+			wp_update_post( array( 'ID' => $p->ID, 'post_status' => 'draft' ) );
+		}
+	}
+	$sit = get_posts( array( 'post_type' => 'rs_team', 'title' => 'Siddaganga Institute of Technology', 'posts_per_page' => 1, 'post_status' => 'any' ) );
+	if ( $sit ) {
+		wp_update_post( array( 'ID' => $sit[0]->ID, 'post_title' => 'Siddaganga Institute of Technology, Tumkur, Karnataka' ) );
+	}
+	update_option( 'rs_190_done', 1 );
+}, 37 );
+
+/** 1.11.1 (25 Oct): "Meet RamSetu Team" hidden for now; remove its menu link. Team profiles are kept. */
+add_action( 'init', function () {
+	if ( ! get_option( 'rs_setup_done' ) || get_option( 'rs_1111_done' ) ) {
+		return;
+	}
+	foreach ( wp_get_nav_menus() as $menu ) {
+		foreach ( (array) wp_get_nav_menu_items( $menu ) as $item ) {
+			if ( 'Meet RamSetu Team' === html_entity_decode( $item->title, ENT_QUOTES, 'UTF-8' ) ) {
+				wp_delete_post( $item->ID, true );
+			}
+		}
+	}
+	update_option( 'rs_1111_done', 1 );
+}, 39 );

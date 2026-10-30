@@ -34,6 +34,7 @@
 				<li><a href="<?php echo esc_url( rs_page_url( 'about' ) . '#vision' ); ?>"><?php esc_html_e( 'Vision & Mission', 'ramsetu' ); ?></a></li>
 				<li><a href="<?php echo esc_url( rs_page_url( 'about' ) . '#roadmap' ); ?>"><?php esc_html_e( 'Future Roadmap', 'ramsetu' ); ?></a></li>
 				<li><a href="<?php echo esc_url( rs_page_url( 'about' ) . '#leadership' ); ?>"><?php esc_html_e( 'Our Leadership', 'ramsetu' ); ?></a></li>
+				<?php if ( apply_filters( 'rs_show_team', false ) ) : ?><li><a href="<?php echo esc_url( rs_page_url( 'about' ) . '#team' ); ?>"><?php esc_html_e( 'Meet RamSetu Team', 'ramsetu' ); ?></a></li><?php endif; ?>
 				<li><a href="<?php echo esc_url( rs_page_url( 'about' ) . '#presence' ); ?>"><?php esc_html_e( 'Our Presence', 'ramsetu' ); ?></a></li>
 			</ul>
 		</div>
